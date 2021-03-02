@@ -17,6 +17,8 @@ class OperationMongo(object):
         :param password:用户密码:
         """
         mongo_url = "mongodb://{}:27017/".format(ip)
+
+        # 14352
         client = pymongo.MongoClient(mongo_url)
         self.data_base = client[data_base]
         self.data_base.authenticate(user, password, mechanism='SCRAM-SHA-1')
