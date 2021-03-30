@@ -16,13 +16,12 @@ def user_login():
     my_col = mydb['admin']
     # data包含用户的邮箱和密码（2个数据）
     data = list(request.json.values())
-
+    print(request.json.values())
     # 判断是否输入了账号和密码
-
     if len(data) is 2 and '' not in data:
         # 判断用户是否存在
         email_record = my_col.find_one({'Admin_email': data[0]})
-
+        print(email_record)
         if email_record:
             # 判断根据email和password是否在数据库中找到记录
             user_record = my_col.find_one({'Admin_email': data[0], 'Admin_pwd': data[1]})
@@ -47,8 +46,14 @@ def verify_token():
 @jwt_required
 def protected():
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    return jsonify(name=current_user), 200
 
+
+# 注销登录
+@adminLogin.route('/logout', methods=['POST'])
+@jwt_required
+def logout():
+    return jsonify({"code": 200, "status": "success"}), 200
 
 # 修改密码的接口
 @adminLogin.route('/change_password', methods=['POST'])

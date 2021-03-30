@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author  : yunze
 import pymongo
-my_client = pymongo.MongoClient("mongodb://106.14.117.35:27017/")
+my_client = pymongo.MongoClient("mongodb://121.4.99.161:27017/")
 # mydb = my_client["sports"]
-mydb = my_client.dataanalysis
-mydb.authenticate('dataAnalysis', '12345678', mechanism='SCRAM-SHA-1')
+mydb = my_client.shujufenxi
+mydb.authenticate('shujufenxi', '123456', mechanism='SCRAM-SHA-1')
 
 
 class OperationMongo(object):
