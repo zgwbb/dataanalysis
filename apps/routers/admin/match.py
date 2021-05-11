@@ -119,41 +119,49 @@ def delete_match():
 @jwt_required
 def get_match_apply():
     # 获取管理员信息
-    my_col = mydb['admin']
-    # 获取赛事信息
-    my_col_book = mydb['Book_Info']
-    data1 = []
-    pinglun = []
-    email_record = my_col_book.find()
-    for i in email_record:
-        # 对于每个类别的数据量进行排序
-        data1.append({"商品id": i["商品id"], "标题": i['标题'],
-                      "评价": i['评价'], "总评数": int(i['总评数'])})
-
-    list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
-    list2 = list2[:10]
-    for i in list2:
-        strlist = i['评价'].split('，')
-        for j in strlist:
-            if j == '':
-                strlist.remove(j)
-        pinglun.append(strlist)
-    rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
-    count = {}  # 空元组
-    for item in rwords:
-        count[item] = count.get(item, 0) + 1  # get 查找键 item
-    print(count)
-
-    # 构造数据
-    values = list(count.values())
-    feature = list(count.keys())
-    alter_feature  = []
-    leidatu = []
+    # my_col = mydb['admin']
+    # # 获取赛事信息
+    # my_col_book = mydb['Book_Info']
+    # data1 = []
+    # pinglun = []
+    # email_record = my_col_book.find()
+    # for i in email_record:
+    #     # 对于每个类别的数据量进行排序
+    #     data1.append({"商品id": i["商品id"], "标题": i['标题'],
+    #                   "评价": i['评价'], "总评数": int(i['总评数'])})
+    #
+    # list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    # list2 = list2[:10]
+    # for i in list2:
+    #     strlist = i['评价'].split('，')
+    #     for j in strlist:
+    #         if j == '':
+    #             strlist.remove(j)
+    #     pinglun.append(strlist)
+    # rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
+    # count = {}  # 空元组
+    # for item in rwords:
+    #     count[item] = count.get(item, 0) + 1  # get 查找键 item
+    # print(count)
+    #
+    # # 构造数据
+    # values = list(count.values())
+    # feature = list(count.keys())
+    # alter_feature  = []
+    # leidatu = []
     try:
-        for i in feature:
-            alter_feature.append({ "name": i, "max": 10})
-        leidatu.append(alter_feature)
-        leidatu.append(values)
+        # for i in feature:
+        #     alter_feature.append({ "name": i, "max": 10})
+        # leidatu.append(alter_feature)
+        # leidatu.append(values)
+        leidatu = [[{'name': '品质一流', 'max': 10}, {'name': '印刷上乘', 'max': 10}, {'name': '图文清晰', 'max': 10}, {'name': '图案精美', 'max': 10},
+                    {'name': '优美详细', 'max': 10}, {'name': '质地上乘', 'max': 10}, {'name': '字体适宜', 'max': 10}, {'name': '毫无异味', 'max': 10},
+                    {'name': '纸张精良', 'max': 10}, {'name': '精美雅致', 'max': 10}, {'name': '轻松有趣', 'max': 10}, {'name': '简单清晰', 'max': 10},
+                    {'name': '增长知识', 'max': 10}, {'name': '内容精彩', 'max': 10}, {'name': '内容丰富', 'max': 10}, {'name': '色彩艳丽', 'max': 10}],
+                   [10, 10, 9, 10, 10, 10, 2, 9, 4, 3, 8, 5, 5, 3, 1, 1]]
+
+        print("输出")
+        print(leidatu)
         return dumps(leidatu), 200
     except KeyError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
@@ -238,63 +246,65 @@ def alter_match_apply():
 @jwt_required
 def get_bingtu():
     # 获取管理员信息
-    my_col = mydb['admin']
-    thisset = set()
-    life = 0
-    science = 0
-    shaoer = 0
-    original_edition = 0
-    Self_Improvement = 0
-    jisji = 0
-    jinying = 0
-    yishu = 0
-    rwen = 0
-    zazhi = 0
-    xiaoshuo = 0
-    jiaoyu = 0
-    my_col = mydb['Book_Info']
-    email_record = []
-    # 去重
-    email_record1 = my_col.find()
-    for i in email_record1:
-        email_record.append({"标题": i["标题"], "类型": i["类型"], "总评数": int(i["总评数"])})
-    run_function = lambda x, y: x if y in x else x + [y]
-    email_record = reduce(run_function, [[], ] + email_record)
-    print(len(email_record))
-    for i in email_record:
-        thisset.add(i["类型"])
-        if i["类型"] == '生活':
-            life = life + i["总评数"]
-        elif i["类型"] == '科技':
-            science = science + i["总评数"]
-        elif i["类型"] == '原版图书':
-            original_edition = original_edition + i["总评数"]
-        elif i["类型"] == '励志与成功':
-            Self_Improvement = Self_Improvement + i["总评数"]
-        elif i["类型"] == '教育':
-            jiaoyu = jiaoyu + i["总评数"]
-        elif i["类型"] == '小说文学':
-            xiaoshuo = xiaoshuo + i["总评数"]
-        elif i["类型"] == '杂志期刊':
-            zazhi = zazhi + i["总评数"]
-        elif i["类型"] == '人文科学':
-            rwen = rwen + i["总评数"]
-        elif i["类型"] == '艺术/摄影':
-            yishu = yishu + i["总评数"]
-        elif i["类型"] == '经营':
-            jinying = jinying + i["总评数"]
-        elif i["类型"] == '计算机与互联网':
-            jisji = jisji + i["总评数"]
-        else:
-            shaoer = shaoer + i["总评数"]
-    Statistics = {'生活': life, '科技': science, '原版图书': original_edition, '励志与成功': Self_Improvement,
-                  '教育': jiaoyu, '小说文学': xiaoshuo, '杂志期刊': zazhi, '人文科学': rwen,
-                  '艺术/摄影': yishu, '经营': jinying, '计算机与互联网': jisji, '少儿': shaoer}
-    labels = list(Statistics.keys())
-    sizes = list(Statistics.values())
-    print(labels)
-    print(sizes)
+    # my_col = mydb['admin']
+    # thisset = set()
+    # life = 0
+    # science = 0
+    # shaoer = 0
+    # original_edition = 0
+    # Self_Improvement = 0
+    # jisji = 0
+    # jinying = 0
+    # yishu = 0
+    # rwen = 0
+    # zazhi = 0
+    # xiaoshuo = 0
+    # jiaoyu = 0
+    # my_col = mydb['Book_Info']
+    # email_record = []
+    # # 去重
+    # email_record1 = my_col.find()
+    # for i in email_record1:
+    #     email_record.append({"标题": i["标题"], "类型": i["类型"], "总评数": int(i["总评数"])})
+    # run_function = lambda x, y: x if y in x else x + [y]
+    # email_record = reduce(run_function, [[], ] + email_record)
+    # print(len(email_record))
+    # for i in email_record:
+    #     thisset.add(i["类型"])
+    #     if i["类型"] == '生活':
+    #         life = life + i["总评数"]
+    #     elif i["类型"] == '科技':
+    #         science = science + i["总评数"]
+    #     elif i["类型"] == '原版图书':
+    #         original_edition = original_edition + i["总评数"]
+    #     elif i["类型"] == '励志与成功':
+    #         Self_Improvement = Self_Improvement + i["总评数"]
+    #     elif i["类型"] == '教育':
+    #         jiaoyu = jiaoyu + i["总评数"]
+    #     elif i["类型"] == '小说文学':
+    #         xiaoshuo = xiaoshuo + i["总评数"]
+    #     elif i["类型"] == '杂志期刊':
+    #         zazhi = zazhi + i["总评数"]
+    #     elif i["类型"] == '人文科学':
+    #         rwen = rwen + i["总评数"]
+    #     elif i["类型"] == '艺术/摄影':
+    #         yishu = yishu + i["总评数"]
+    #     elif i["类型"] == '经营':
+    #         jinying = jinying + i["总评数"]
+    #     elif i["类型"] == '计算机与互联网':
+    #         jisji = jisji + i["总评数"]
+    #     else:
+    #         shaoer = shaoer + i["总评数"]
+    # Statistics = {'生活': life, '科技': science, '原版图书': original_edition, '励志与成功': Self_Improvement,
+    #               '教育': jiaoyu, '小说文学': xiaoshuo, '杂志期刊': zazhi, '人文科学': rwen,
+    #               '艺术/摄影': yishu, '经营': jinying, '计算机与互联网': jisji, '少儿': shaoer}
+    # labels = list(Statistics.keys())
+    # sizes = list(Statistics.values())
+    # print(labels)
+    # print(sizes)
     series = []
+    labels = ['生活', '科技', '原版图书', '励志与成功', '教育', '小说文学', '杂志期刊', '人文科学', '艺术/摄影', '经营', '计算机与互联网', '少儿']
+    sizes = [15978387, 5577069, 5629267, 14995119, 37187243, 52941153, 94668, 29628504, 8035188, 15059109, 9332430, 75196484]
     for i in range(len(sizes)):
         series.append( {"value":sizes[i], "name":labels[i]})
     all_series = [series,labels]
@@ -312,87 +322,99 @@ def get_bingtu():
 def get_zhekou():
     print(get_jwt_identity())
     # 获取管理员信息
-    my_col = mydb['admin']
-    thisset = set()
-    life = []
-    science = []
-    shaoer = []
-    original_edition = []
-    Self_Improvement = []
-    jisji = []
-    jinying = []
-    yishu = []
-    rwen = []
-    zazhi = []
-    xiaoshuo = []
-    jiaoyu = []
-    my_col = mydb['Book_Info']
-    data1 = []
-    all_data = []
-    all_data1 = []
-    email_record = my_col.find()
-    for i in email_record:
-        all_data1.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        if i["类型"] == '生活':
-            life.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '科技':
-            science.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '原版图书':
-            original_edition.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '励志与成功':
-            Self_Improvement.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '教育':
-            jiaoyu.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '小说文学':
-            xiaoshuo.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '杂志期刊':
-            zazhi.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '人文科学':
-            rwen.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '艺术/摄影':
-            yishu.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '经营':
-            jinying.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        elif i["类型"] == '计算机与互联网':
-            jisji.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-        else:
-            shaoer.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
-    print(len(science))
-    run_function = lambda x, y: x if y in x else x + [y]
-    life = reduce(run_function, [[], ] + life)
-    Self_Improvement = reduce(run_function, [[], ] + Self_Improvement)
-    science = reduce(run_function, [[], ] + science)
-    original_edition = reduce(run_function, [[], ] + original_edition)
-    jiaoyu = reduce(run_function, [[], ] + jiaoyu)
-    xiaoshuo = reduce(run_function, [[], ] + xiaoshuo)
-    zazhi = reduce(run_function, [[], ] + zazhi)
-    rwen = reduce(run_function, [[], ] + rwen)
-    shaoer = reduce(run_function, [[], ] + shaoer)
-    jisji = reduce(run_function, [[], ] + jisji)
-    jinying = reduce(run_function, [[], ] + jinying)
-    yishu = reduce(run_function, [[], ] + yishu)
-    print(len(science))
-    print(len(all_data))
-    zkxq = []
-    all_data = [life, Self_Improvement, science, original_edition, jiaoyu, xiaoshuo, zazhi, rwen, shaoer, jisji,
-                jinying, yishu]
-    # 分析各个类别的折扣数据
-    for i in all_data:
-        two = 0
-        t_f = 0
-        f_x = 0
-        max_x = 0
-        for j in i:
-            if float(j['折扣']) <= float(0.2):
-                two = two + 1
-            elif float(j['折扣']) > float(0.2) and float(j['折扣']) <= float(0.4):
-                t_f = t_f + 1
-            elif float(j['折扣']) > float(0.4) and float(j['折扣']) <= float(0.6):
-                f_x = f_x + 1
-            else:
-                max_x = max_x + 1
-        zkxq.append({'product': j['类型'], '≤2 折': two, "2 －4 折": t_f, "4 －6 折": f_x, "＞6 折": max_x})
+    # my_col = mydb['admin']
+    # thisset = set()
+    # life = []
+    # science = []
+    # shaoer = []
+    # original_edition = []
+    # Self_Improvement = []
+    # jisji = []
+    # jinying = []
+    # yishu = []
+    # rwen = []
+    # zazhi = []
+    # xiaoshuo = []
+    # jiaoyu = []
+    # my_col = mydb['Book_Info']
+    # data1 = []
+    # all_data = []
+    # all_data1 = []
+    # email_record = my_col.find()
+    # for i in email_record:
+    #     all_data1.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     if i["类型"] == '生活':
+    #         life.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '科技':
+    #         science.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '原版图书':
+    #         original_edition.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '励志与成功':
+    #         Self_Improvement.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '教育':
+    #         jiaoyu.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '小说文学':
+    #         xiaoshuo.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '杂志期刊':
+    #         zazhi.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '人文科学':
+    #         rwen.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '艺术/摄影':
+    #         yishu.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '经营':
+    #         jinying.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     elif i["类型"] == '计算机与互联网':
+    #         jisji.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    #     else:
+    #         shaoer.append({"标题": i["标题"], "类型": i["类型"], "折扣": i['折扣']})
+    # print(len(science))
+    # run_function = lambda x, y: x if y in x else x + [y]
+    # life = reduce(run_function, [[], ] + life)
+    # Self_Improvement = reduce(run_function, [[], ] + Self_Improvement)
+    # science = reduce(run_function, [[], ] + science)
+    # original_edition = reduce(run_function, [[], ] + original_edition)
+    # jiaoyu = reduce(run_function, [[], ] + jiaoyu)
+    # xiaoshuo = reduce(run_function, [[], ] + xiaoshuo)
+    # zazhi = reduce(run_function, [[], ] + zazhi)
+    # rwen = reduce(run_function, [[], ] + rwen)
+    # shaoer = reduce(run_function, [[], ] + shaoer)
+    # jisji = reduce(run_function, [[], ] + jisji)
+    # jinying = reduce(run_function, [[], ] + jinying)
+    # yishu = reduce(run_function, [[], ] + yishu)
+    # print(len(science))
+    # print(len(all_data))
+    # zkxq = []
+    # all_data = [life, Self_Improvement, science, original_edition, jiaoyu, xiaoshuo, zazhi, rwen, shaoer, jisji,
+    #             jinying, yishu]
+    # # 分析各个类别的折扣数据
+    # for i in all_data:
+    #     two = 0
+    #     t_f = 0
+    #     f_x = 0
+    #     max_x = 0
+    #     for j in i:
+    #         if float(j['折扣']) <= float(0.2):
+    #             two = two + 1
+    #         elif float(j['折扣']) > float(0.2) and float(j['折扣']) <= float(0.4):
+    #             t_f = t_f + 1
+    #         elif float(j['折扣']) > float(0.4) and float(j['折扣']) <= float(0.6):
+    #             f_x = f_x + 1
+    #         else:
+    #             max_x = max_x + 1
+    #     zkxq.append({'product': j['类型'], '≤2 折': two, "2 －4 折": t_f, "4 －6 折": f_x, "＞6 折": max_x})
     try:
+        zkxq = [{'product': '生活', '≤2 折': 1, '2 －4 折': 1, '4 －6 折': 60, '＞6 折': 38},
+                {'product': '励志与成功', '≤2 折': 0, '2 －4 折': 6, '4 －6 折': 67, '＞6 折': 27},
+                {'product': '科技', '≤2 折': 0, '2 －4 折': 0, '4 －6 折': 49, '＞6 折': 51},
+                {'product': '原版图书', '≤2 折': 0, '2 －4 折': 7, '4 －6 折': 15, '＞6 折': 78},
+                {'product': '教育', '≤2 折': 1, '2 －4 折': 2, '4 －6 折': 1, '＞6 折': 96},
+                {'product': '小说文学', '≤2 折': 1, '2 －4 折': 7, '4 －6 折': 52, '＞6 折': 40},
+                {'product': '杂志期刊', '≤2 折': 0, '2 －4 折': 0, '4 －6 折': 5, '＞6 折': 95},
+                {'product': '人文科学', '≤2 折': 0, '2 －4 折': 13, '4 －6 折': 51, '＞6 折': 36},
+                {'product': '少儿', '≤2 折': 0, '2 －4 折': 1, '4 －6 折': 0, '＞6 折': 99},
+                {'product': '计算机与互联网', '≤2 折': 0, '2 －4 折': 2, '4 －6 折': 88, '＞6 折': 10},
+                {'product': '经营', '≤2 折': 0, '2 －4 折': 1, '4 －6 折': 57, '＞6 折': 42},
+                {'product': '艺术/摄影', '≤2 折': 14, '2 －4 折': 4, '4 －6 折': 36, '＞6 折': 46}]
         return dumps(zkxq), 200
     except KeyError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
@@ -518,74 +540,77 @@ def tinglungx():
     data1 = []
     pinglun = []
     my_col = mydb['Book_Info']
-
+    my_guanxi = mydb['guanxitu']
     email_record = my_col.find()
-    for i in email_record:
-        # 对于每个类别的数据量进行排序
-        data1.append({"商品id": i["商品id"], "标题": i['标题'],
-                      "评价": i['评价'], "总评数": int(i['总评数'])})
-    # 去重
-    run_function = lambda x, y: x if y in x else x + [y]
-    data1 = reduce(run_function, [[], ] + data1)
-    list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    # for i in email_record:
+    #     # 对于每个类别的数据量进行排序
+    #     data1.append({"商品id": i["商品id"], "标题": i['标题'],
+    #                   "评价": i['评价'], "总评数": int(i['总评数'])})
+    # # 去重
+    # run_function = lambda x, y: x if y in x else x + [y]
+    # data1 = reduce(run_function, [[], ] + data1)
+    # list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    # # for i in list2:
+    # #     print(i['评价'])
     # for i in list2:
-    #     print(i['评价'])
-    for i in list2:
-        strlist = i['评价'].split('，')
-        for j in strlist:
-            if j == '':
-                strlist.remove(j)
-        pinglun.append(strlist)
-    rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
-    count = {}  # 空元组
-    for item in rwords:
-        count[item] = count.get(item, 0) + 1  # get 查找键 item
-    print(count)
-    bb = list(itertools.permutations(count, 2))
-    print(bb)
-    print("######################")
-    guanxitu_data = {}
-    cc = list(itertools.combinations(count, 2))
-    time_start = time.time()
-    for i in cc:
-        num = 0
-        for j in pinglun:
-            # 判断是否在里面
-            if set(i) < set(j):
-                num = num + 1
-            else:
-                continue
-        guanxitu_data[i] = num
-    time_end = time.time()
-    print('time cost', time_end - time_start, 's')
-    print(guanxitu_data)
-    guanxitu_data = sorted(guanxitu_data.items(), key=lambda item: item[1], reverse=True)
-    print(guanxitu_data)
-    # print(cc)
+    #     strlist = i['评价'].split('，')
+    #     for j in strlist:
+    #         if j == '':
+    #             strlist.remove(j)
+    #     pinglun.append(strlist)
+    # rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
+    # count = {}  # 空元组
+    # for item in rwords:
+    #     count[item] = count.get(item, 0) + 1  # get 查找键 item
+    # # print(count)
+    # bb = list(itertools.permutations(count, 2))
+    # # print(bb)
+    # print("######################")
+    # guanxitu_data = {}
+    # cc = list(itertools.combinations(count, 2))
+    # time_start = time.time()
     # for i in cc:
-    #     print(i)
-    # print(len(cc))
-    print(list(count.keys()))
-    print(len(list(count.keys())))
-
-    # 构造数据
-    values = list(count.values())
-    feature = list(count.keys())
+    #     num = 0
+    #     for j in pinglun:
+    #         # 判断是否在里面
+    #         if set(i) < set(j):
+    #             num = num + 1
+    #         else:
+    #             continue
+    #     guanxitu_data[i] = num
+    # time_end = time.time()
+    # # print('time cost', time_end - time_start, 's')
+    # # print(guanxitu_data)
+    # guanxitu_data = sorted(guanxitu_data.items(), key=lambda item: item[1], reverse=True)
+    # # print(guanxitu_data)
+    # # print(cc)
+    # # for i in cc:
+    # #     print(i)
+    # # print(len(cc))
+    # # print(list(count.keys()))
+    # # print(len(list(count.keys())))
+    #
+    # # 构造数据
+    # values = list(count.values())
+    # feature = list(count.keys())
+    # # for i in feature:
+    # #     print({"name": i})
+    #
+    # # print(values)
+    # # print(feature)
+    # categories = []
+    # dataSet = []
     # for i in feature:
-    #     print({"name": i})
-
-    print(values)
-    print(feature)
-    categories = []
-    dataSet = []
-    for i in feature:
-        categories.append({"name":i})
-        dataSet.append({"name":i, "value": 1, "category":feature.index(i)})
-    dataRelate = []
-    for i in guanxitu_data:
-        dataRelate.append({"source":i[0][0],"target":i[0][1],"value":i[1]})
+    #     categories.append({"name":i})
+    #     dataSet.append({"name":i, "value": 1, "category":feature.index(i)})
+    # dataRelate = []
+    # for i in guanxitu_data:
+    #     dataRelate.append({"source":i[0][0],"target":i[0][1],"value":i[1]})
     try:
-        return dumps([categories,dataSet,dataRelate]), 200
+        for i in my_guanxi.find():
+            all_guanxi = i['guanxitu']
+        # print([categories,dataSet,dataRelate])
+        return dumps(all_guanxi), 200
     except KeyError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
     except ValueError:
@@ -598,137 +623,155 @@ def zongdeleidatu():
     data1 = []
     pinglun = []
     my_col = mydb['Book_Info']
-
-    email_record = my_col.find()
-    for i in email_record:
-        # 对于每个类别的数据量进行排序
-        data1.append({"商品id": i["商品id"], "标题": i['标题'],
-                      "评价": i['评价'], "总评数": int(i['总评数']), "类型": i["类型"]})
-    # 去重
-    run_function = lambda x, y: x if y in x else x + [y]
-    data1 = reduce(run_function, [[], ] + data1)
-    list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    my_data = mydb['all_leidatu']
+    # email_record = my_col.find()
+    # for i in email_record:
+    #     # 对于每个类别的数据量进行排序
+    #     data1.append({"商品id": i["商品id"], "标题": i['标题'],
+    #                   "评价": i['评价'], "总评数": int(i['总评数']), "类型": i["类型"]})
+    # # 去重
+    # run_function = lambda x, y: x if y in x else x + [y]
+    # data1 = reduce(run_function, [[], ] + data1)
+    # list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    # # for i in list2:
+    # #     print(i['评价'])
+    # leixin = []
+    # all_data = []
     # for i in list2:
-    #     print(i['评价'])
-    leixin = []
-    all_data = []
-    for i in list2:
-        strlist = i['评价'].split('，')
-        for j in strlist:
-            if j == '':
-                strlist.remove(j)
-        pinglun.append(strlist)
-        leixin.append(i["类型"])
-        all_data.append({"类型": i['类型'], "评价": strlist})
-    all_data = sorted(all_data, key=itemgetter('类型'))
-    res = dict((k, list(g)) for k, g in itertools.groupby(all_data, key=itemgetter('类型')))
-    # print(res)
-    rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
-    count = {}  # 空元组
-    for item in rwords:
-        count[item] = count.get(item, 0) + 1  # get 查找键 item
-    ciyu = {}
-    print(count)
-    for i in list(count.keys()):
-        ciyu[i] = 0
-    count1 = {}
-    for item in leixin:
-        count1[item] = count1.get(item, 0) + 1  # get 查找键 item
-    all_pinlun = []
-    for i in list(count1.keys()):
-        all_haopindu = []
-        for j in res[i]:
-            all_haopindu = all_haopindu + j['评价']
-        dan_ciyu = {}  # 空元组
-        for item1 in all_haopindu:
-            dan_ciyu[item1] = dan_ciyu.get(item1, 0) + 1  # get 查找键 item
-        for k in list(dan_ciyu.keys()):
-            ciyu[k] = dan_ciyu[k]
-        text = list(ciyu.values())
-        all_pinlun.append({i: text})
-        # print(ciyu)
-    all_data_zong = []
-    for i in all_pinlun:
-        all_data_zong.append(list(i.values())[0])
-    for i in all_data_zong:
-        print(i)
-    data_all_shuju = []
-    indicator = []
-    for i in list(count.keys()):
-        indicator.append(i)
-    print(count1)
-    for i in range(len(all_data_zong)):
-        data_all_shuju.append({"name": list(count1.keys())[i], "value": all_data_zong[i]})
-    print(data_all_shuju)
+    #     strlist = i['评价'].split('，')
+    #     for j in strlist:
+    #         if j == '':
+    #             strlist.remove(j)
+    #     pinglun.append(strlist)
+    #     leixin.append(i["类型"])
+    #     all_data.append({"类型": i['类型'], "评价": strlist})
+    # all_data = sorted(all_data, key=itemgetter('类型'))
+    # res = dict((k, list(g)) for k, g in itertools.groupby(all_data, key=itemgetter('类型')))
+    # # print(res)
+    # rwords = [brand for drink in pinglun for brand in drink]  # 将列表扁平化
+    # count = {}  # 空元组
+    # for item in rwords:
+    #     count[item] = count.get(item, 0) + 1  # get 查找键 item
+    # ciyu = {}
+    # # print(count)
+    # for i in list(count.keys()):
+    #     ciyu[i] = 0
+    # count1 = {}
+    # for item in leixin:
+    #     count1[item] = count1.get(item, 0) + 1  # get 查找键 item
+    # all_pinlun = []
+    # for i in list(count1.keys()):
+    #     all_haopindu = []
+    #     for j in res[i]:
+    #         all_haopindu = all_haopindu + j['评价']
+    #     dan_ciyu = {}  # 空元组
+    #     for item1 in all_haopindu:
+    #         dan_ciyu[item1] = dan_ciyu.get(item1, 0) + 1  # get 查找键 item
+    #     for k in list(dan_ciyu.keys()):
+    #         ciyu[k] = dan_ciyu[k]
+    #     text = list(ciyu.values())
+    #     all_pinlun.append({i: text})
+    #     # print(ciyu)
+    # all_data_zong = []
+    # for i in all_pinlun:
+    #     all_data_zong.append(list(i.values())[0])
+    # # for i in all_data_zong:
+    # #     print(i)
+    # data_all_shuju = []
+    # indicator = []
+    # for i in list(count.keys()):
+    #     indicator.append(i)
+    # # print(count1)
+    # for i in range(len(all_data_zong)):
+    #     data_all_shuju.append({"name": list(count1.keys())[i], "value": all_data_zong[i]})
+    # print(data_all_shuju)
     try:
-        return dumps([indicator, data_all_shuju,list(count1.keys())]), 200
+        # print([indicator, data_all_shuju,list(count1.keys())])
+        all_data = my_data.find()
+        for data_leidatu in all_data:
+            need_data = data_leidatu['all_data']
+        print(need_data)
+        return dumps(need_data), 200
     except KeyError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
     except ValueError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
 
-# 形容词饼图
+# 关联规则
 @matchevent.route('/gljg', methods=['POST'])
 @jwt_required
 def gljg():
     data1 = []
     pinglun = []
     my_col = mydb['Book_Info']
-    email_record = my_col.find()
-    for i in email_record:
-        # 对于每个类别的数据量进行排序
-        data1.append({"商品id": i["商品id"], "标题": i['标题'],
-                      "评价": i['评价'], "总评数": int(i['总评数'])})
-    run_function = lambda x, y: x if y in x else x + [y]
-    data1 = reduce(run_function, [[], ] + data1)
-    list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
-    list2 = list2[:10]
-    for i in list2:
-        print(i)
-    for i in list2:
-        strlist = i['评价'].split('，')
-        for j in strlist:
-            if j == '':
-                strlist.remove(j)
-        pinglun.append(strlist)
-    te = TransactionEncoder()
-    # 进行 one-hot 编码
-    te_ary = te.fit(pinglun).transform(pinglun)
-    df = pd.DataFrame(te_ary, columns=te.columns_)
-    # 利用 Apriori 找出频繁项集
-    freq = apriori(df, min_support=0.6, use_colnames=True)
-    # print(freq)
-    # print(freq.describe())
-    result = association_rules(freq, metric="confidence", min_threshold=0.6)
-
-    # 筛选出提升度和置信度满足条件的关联规则
-    result = result[(result["lift"] > 1) & (result["confidence"] > 0.8)]
-    das = result.to_dict(orient='records')
-    print(result)
-    print(len(das))
-    dataSet = []
-    dataRelate = []
-    categories = ['品质一流', '印刷上乘', '图文清晰', '图案精美', '优美详细', '质地上乘', '字体适宜', '毫无异味',
-                  '纸张精良', '精美雅致', '轻松有趣', '简单清晰', '增长知识', '内容精彩', '内容丰富', '色彩艳丽']
-    categories_gai = {}
-    num = 0
-    for i in categories:
-        categories_gai[i] = num
-        num = num + 1
-    for i in das:
-        # print(i)
-
-        i['consequents'] = "、".join(list(i['consequents']))
-        i['antecedents'] = "、".join(list(i['antecedents']))
-        # print(type(i['consequents']), type(i['antecedents']))
-        # i['consequents'] = i['consequents'].encode("utf-8")
-        # i['antecedents'] = i['antecedents'].encode("utf-8")
-        i["antecedent_support"] = i.pop("antecedent support")
-        i["consequent_support"] = i.pop("consequent support")
-        print(i)
-        dataRelate.append(i)
+    my_data = mydb['guanlianguize']
+    # email_record = my_col.find()
+    # for i in email_record:
+    #     # 对于每个类别的数据量进行排序
+    #     data1.append({"商品id": i["商品id"], "标题": i['标题'],
+    #                   "评价": i['评价'], "总评数": int(i['总评数'])})
+    # run_function = lambda x, y: x if y in x else x + [y]
+    # data1 = reduce(run_function, [[], ] + data1)
+    # list2 = sorted(data1, key=operator.itemgetter('总评数'), reverse=True)
+    # list2 = list2[:10]
+    # # for i in list2:
+    # #     print(i)
+    # for i in list2:
+    #     strlist = i['评价'].split('，')
+    #     for j in strlist:
+    #         if j == '':
+    #             strlist.remove(j)
+    #     pinglun.append(strlist)
+    # te = TransactionEncoder()
+    # # 进行 one-hot 编码
+    # te_ary = te.fit(pinglun).transform(pinglun)
+    # df = pd.DataFrame(te_ary, columns=te.columns_)
+    # # 利用 Apriori 找出频繁项集
+    # freq = apriori(df, min_support=0.6, use_colnames=True)
+    # # print(freq)
+    # # print(freq.describe())
+    # result = association_rules(freq, metric="confidence", min_threshold=0.6)
+    #
+    # # 筛选出提升度和置信度满足条件的关联规则
+    # result = result[(result["lift"] > 1) & (result["confidence"] > 0.8)]
+    # das = result.to_dict(orient='records')
+    # # print(result)
+    # # print(len(das))
+    # dataSet = []
+    # dataRelate = []
+    # categories = ['品质一流', '印刷上乘', '图文清晰', '图案精美', '优美详细', '质地上乘', '字体适宜', '毫无异味',
+    #               '纸张精良', '精美雅致', '轻松有趣', '简单清晰', '增长知识', '内容精彩', '内容丰富', '色彩艳丽']
+    # categories_gai = {}
+    # num = 0
+    # for i in categories:
+    #     categories_gai[i] = num
+    #     num = num + 1
+    # for i in das:
+    #     if i['conviction'] == float("inf"):
+    #         i['conviction'] = "无穷大"
+    #         i['consequents'] = "、".join(list(i['consequents']))
+    #         i['antecedents'] = "、".join(list(i['antecedents']))
+    #         # print(type(i['consequents']), type(i['antecedents']))
+    #         # i['consequents'] = i['consequents'].encode("utf-8")
+    #         # i['antecedents'] = i['antecedents'].encode("utf-8")
+    #         i["antecedent_support"] = i.pop("antecedent support")
+    #         i["consequent_support"] = i.pop("consequent support")
+    #         # print(i)
+    #         dataRelate.append(i)
+    #     else:
+    #         i['consequents'] = "、".join(list(i['consequents']))
+    #         i['antecedents'] = "、".join(list(i['antecedents']))
+    #         # print(type(i['consequents']), type(i['antecedents']))
+    #         # i['consequents'] = i['consequents'].encode("utf-8")
+    #         # i['antecedents'] = i['antecedents'].encode("utf-8")
+    #         i["antecedent_support"] = i.pop("antecedent support")
+    #         i["consequent_support"] = i.pop("consequent support")
+    #         # print(i)
+    #         dataRelate.append(i)
     try:
-        return dumps(dataRelate,ensure_ascii=False), 200
+        for i in my_data.find():
+            all_data = i['data']
+        return dumps(all_data), 200
     except KeyError:
         return jsonify({'success': False, 'message': 'Wrong number of values entered'}), 401
     except ValueError:

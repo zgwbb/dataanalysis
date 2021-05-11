@@ -9,6 +9,7 @@ mpl.rcParams['axes.unicode_minus'] = False # 解决保存图像是负号'-'显�
 data1 = []
 pinglun = []
 my_col = mydb['comment']
+my_pinglun = mydb['Book_Info']
 # email_record = my_col.find_one({"title": "恐龙百科（儿童注音版） [7-10岁]"})["details"]
 # for i in email_record:
 #     # 对于每个类别的数据量进行排序
@@ -17,9 +18,11 @@ data3 = []
 for all_coment in my_col.find():
     data1 = []
     email_record = all_coment['details']
+    biaoti = all_coment['title']
     for i in email_record:
         # 对于每个类别的数据量进行排序
         data1.append(i["all_comment"])
+        haopinglv = my_pinglun.find_one({"标题":biaoti})["好评率"]+"%"
     jiebaword = []
     for line in data1:
         line = line.strip('\n')
@@ -39,18 +42,18 @@ for all_coment in my_col.find():
     positive.append('没事')
     positive.append('没得说')
     negative = [line.strip() for line in open("NTUSD_negative_simplified1.txt", 'r', encoding='utf-8').readlines()]
-    # stopwords.append('京东')
-    # stopwords.append('快递')
+    stopwords.append('京东')
+    stopwords.append('快递')
     all_positive = []
     all_negative = []
-    # fw = open('clean.txt', 'a+',encoding='utf-8')
+    # fw = open('clean2.txt', 'a+',encoding='utf-8')
     for words in jiebaword:
         words = words.split('/')
         for word in words:
             if word not in stopwords:
                 data2.append(word)
                 # fw.write(word + '\t')
-        # fw.write('\n')
+    #     fw.write('\n')
     # fw.close()
     for words in data2:
         words = words.split('/')
@@ -60,17 +63,17 @@ for all_coment in my_col.find():
             elif word in negative:
                 all_negative.append(word)
     count = {}  # 空元组
-    print(data2)
-    print(len(data2))
+    # print(data2)
+    # print(len(data2))
     for item in data2:
         count[item] = count.get(item, 0) + 1  # get 查找键 item
-    print(len(list(count.values())))
-    print(count)
+    # print(len(list(count.values())))
+    # print(count)
     new_count = sorted(count.items(), key=lambda item: item[1])
     print({"负面词": len(all_negative), "正面词": len(all_positive)})
-    print({"比例": (len(all_positive) / (len(all_negative) + len(all_positive)))*100})
+    print({"比例": (len(all_positive) / (len(all_negative) + len(all_positive)))*100},{"原有好评率":haopinglv})
     data3.append((len(all_positive) / (len(all_negative) + len(all_positive)))*100)
 # for i in all_negative:
 #     print(i)
 print(data3)
-
+#

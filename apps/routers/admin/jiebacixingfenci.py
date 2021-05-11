@@ -95,8 +95,8 @@ rs= jieba.analyse.textrank(str,allowPOS=('a'))
 print({"textrank结果": rs})
 print('返回关键词及权重值')
 rs=jieba.analyse.textrank(str,20,True,('a',))
-print(rs)
-print(type(rs))
+# print(rs)
+# print(type(rs))
 for k,v in rs:
     print(k,v,sep="\t")
 

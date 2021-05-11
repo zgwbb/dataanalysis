@@ -27,10 +27,10 @@ email_record = []
 # 去重
 email_record1 = my_col.find()
 for i in email_record1:
-    email_record.append({"标题":i["标题"],"类型": i["类型"], "总评数": i["总评数"]})
+    email_record.append({"标题":i["标题"],"类型": i["类型"], "总评数": int(i["总评数"])})
 run_function = lambda x, y: x if y in x else x + [y]
 email_record = reduce(run_function, [[], ] + email_record)
-print(len(email_record))
+print("读取的图书的本数为: %d"% len(email_record))
 for i in email_record:
     thisset.add(i["类型"])
     if i["类型"] == '生活':
@@ -60,10 +60,13 @@ for i in email_record:
 Statistics = {'生活':life, '科技':science, '原版图书':original_edition, '励志与成功':Self_Improvement,
        '教育':jiaoyu, '小说文学':xiaoshuo, '杂志期刊':zazhi, '人文科学':rwen,
        '艺术/摄影':yishu, '经营':jinying, '计算机与互联网':jisji, '少儿':shaoer}
+
+data = sorted(Statistics.items(), key = lambda kv:(kv[1], kv[0]))
 labels = list(Statistics.keys())
 sizes = list(Statistics.values())
-print(sizes)
-print(labels)
+for i in range(len(data)):
+    x = str(data[i][0]) + ":" + str(data[i][1])
+    print(x)
 # print(thisset)
 # labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
 # sizes = [15, 30, 45, 10]

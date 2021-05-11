@@ -62,32 +62,31 @@ my_col = mydb['Book_Info']
 #     else:
 #         print(data[2])
 
-# 数据数量分析
-
+# 数据上传
 data1 = []
 sheet1 = pd.read_excel('京东图书数据1200改3.xlsx',engine='openpyxl')
-# for i in range(0, sheet1.shape[0]):
-#     data = sheet1.iloc[i].values  # 0表示第一行 这里读取数据并不包含表头，要注意哦！
-#     data1.append({"商品id": data[0],  "标题": data[1], "类型": data[2], "作者":data[3], "价格": data[4], "折扣":data[5],
-#                   "出版社": data[6], "ISBN": data[7], "品牌":data[8], "包装": data[9], "出版时间":data[10],
-#                   "用纸":data[11], "好评率": data[12], "好评度词":data[13], "总评数": data[14], "好评数":data[15], "差评数":data[16]})
+for i in range(0, sheet1.shape[0]):
+    data = sheet1.iloc[i].values  # 0表示第一行 这里读取数据并不包含表头，要注意哦！
+    data1.append({"商品id": data[0],  "标题": data[1], "类型": data[2], "作者":data[3], "价格": data[4], "折扣":data[5],
+                  "出版社": data[6], "ISBN": data[7], "品牌":data[8], "包装": data[9], "出版时间":data[10],
+                  "用纸":data[11], "好评率": data[12], "好评度词":data[13], "总评数": data[14], "好评数":data[15], "差评数":data[16]})
 
 # 把数据插入到书籍信息集合中
-# data = xlrd.open_workbook('京东图书数据1200改3.xlsx')
-# table = data.sheets()[0]
-# # 读取excel第一行数据作为存入mongodb的字段名
-# rowstag = table.row_values(0)
-# nrows = table.nrows
-# returnData = {}
-#
-#
-# for i in range(1, nrows):
-#     # 将字段名和excel数据存储为字典形式，并转换为json格式
-#     returnData[i] = json.dumps(dict(zip(rowstag, table.row_values(i))))
-#     # 通过编解码还原数据
-#     returnData[i] = json.loads(returnData[i])
-#     # print returnData[i]
-#     my_col.insert_one(returnData[i])
+data = xlrd.open_workbook('京东图书数据1200改3.xlsx')
+table = data.sheets()[0]
+# 读取excel第一行数据作为存入mongodb的字段名
+rowstag = table.row_values(0)
+nrows = table.nrows
+returnData = {}
+
+
+for i in range(1, nrows):
+    # 将字段名和excel数据存储为字典形式，并转换为json格式
+    returnData[i] = json.dumps(dict(zip(rowstag, table.row_values(i))))
+    # 通过编解码还原数据
+    returnData[i] = json.loads(returnData[i])
+    # print returnData[i]
+    my_col.insert_one(returnData[i])
 #上传销售量前10的评论
 list2 = sorted(data1, key=operator.itemgetter('数量'), reverse=True)
 list2 = list2[:10]

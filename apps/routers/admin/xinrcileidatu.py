@@ -36,12 +36,17 @@ rwords=[brand for drink in pinglun for brand in drink] #将列表扁平化
 count={} #空元组
 for item in rwords:
     count[item]=count.get(item,0)+1 #get 查找键 item
+print("好评度词数量排行：")
 print(count)
 bb = list(itertools.permutations(count, 2))
+print("对好评度词进行两两组合：")
 print(bb)
-print("######################")
+print("对好评度词进行两两组合后的数量：")
+print(len(bb))
 guanxitu_data = {}
 cc = list(itertools.combinations(count, 2))
+print("对两两组合后的数据进行去重后的数量")
+print(len(cc))
 time_start=time.time()
 for i in cc:
     num = 0
@@ -53,15 +58,16 @@ for i in cc:
             continue
     guanxitu_data[i]=num
 time_end=time.time()
-print('time cost',time_end-time_start,'s')
-print(guanxitu_data)
+
+# print(guanxitu_data)
 guanxitu_data = sorted(guanxitu_data.items(), key=lambda item:item[1],reverse=True)
+print("两两组合后的数据在总的图书的出现的次数")
 print(guanxitu_data)
 # print(cc)
 # for i in cc:
 #     print(i)
-# print(len(cc))
-print(list(count.keys()))
+# print(list(count.keys()))
+print("好评度词去重后的数量:")
 print(len(list(count.keys())))
 # 使用ggplot的绘图风格，这个类似于美化了，可以通过plt.style.available查看可选值，你会发现其它的风格真的丑。。。
 plt.style.use('ggplot')
